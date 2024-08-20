@@ -1,5 +1,0 @@
-README.md
-a.out
-a.out.dSYM
-ls_output.txt
-pipe.c
