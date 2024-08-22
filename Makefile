@@ -6,7 +6,7 @@ OBJS     = $(SRCS:.c=.o)
 #LIB_NAME = libft
 #LIB_PATH = ./$(LIB_NAME)/$(LIB_NAME).a
 
-.PHONY: all
+.PHONY: NAME all
 all: $(NAME)
 
 $(NAME): $(OBJS) #$(LIB_PATH)
