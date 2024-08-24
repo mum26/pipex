@@ -13,8 +13,7 @@ LIB_PATH = ./$(LIB_NAME)/$(LIB_NAME).a
 all: $(NAME)
 
 $(NAME): $(OBJS) $(LIB_PATH)
-	$(CC) $(OBJS) -o $(NAME)
-	$(LDFLAGS)
+	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) -o $(NAME)
 
 $(LIB_PATH):
 	$(MAKE) -C $(LIB_NAME) bonus
