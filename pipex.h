@@ -6,7 +6,7 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 17:41:08 by sishige           #+#    #+#             */
-/*   Updated: 2024/08/24 23:31:25 by sishige          ###   ########.fr       */
+/*   Updated: 2024/08/24 23:40:47 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 # include <unistd.h>
 # include <sys/wait.h>
 # include <fcntl.h>
-# include "libft/libft.h"
+# include "libft.h"
 
 extern char **environ;
 
