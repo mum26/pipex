@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   pipex.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/08/24 23:08:16 by sishige           #+#    #+#             */
+/*   Updated: 2024/08/24 23:30:57 by sishige          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "pipex.h"
 
 int	main(int argc, char **argv, char **env)
@@ -13,50 +25,31 @@ int	main(int argc, char **argv, char **env)
 	char *cmd_args2[] = {argv[4], NULL};
 
 	if (pipe(pipefds) == -1)
-	{
-		perror("pipe(2)");
-		exit(EXIT_FAILURE);
-	}
-
+		die("pipe");
 	pid = fork();
 	if (pid == -1)
-	{
-		perror("fork(2)");
-		exit(EXIT_FAILURE);
-	}
+		die("fork");
 
 	if (pid == 0)
 	{
 		close(pipefds[R]);
 		if (dup2(pipefds[W], STDOUT_FILENO) == -1)
-		{
-			perror("dup2(2)");
-			exit(EXIT_FAILURE);
-		}
+			die("dup2");
 		close(pipefds[W]);
 
 		if (execve(argv[3], cmd_args1, env) == -1)
-		{
-			perror("execve");
-			exit(EXIT_FAILURE);
-		}
+			die("execve");
 	}
 	else
 	{
 		wait(NULL);
 		close(pipefds[W]);
 		if (dup2(pipefds[R], STDIN_FILENO) == -1)
-		{
-			perror("dup2");
-			exit(EXIT_FAILURE);
-		}
+			die("dup2");
 		close(pipefds[R]);
 
 		if (execve(argv[4], cmd_args2, env) == -1)
-		{
-			perror("execve");
-			exit(EXIT_FAILURE);
-		}
+			die("execve");
 	}
 	return (0);
 }
