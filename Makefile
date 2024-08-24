@@ -1,17 +1,20 @@
 NAME     = pipex
-CFLAGS   = -Wall -Wextra -Werror -g #-Ilibft
-#LDFLAGS  = -Llibft -lft
-SRCS     = pipex.c
+CFLAGS   = -Wall -Wextra -Werror -g -Ilibft
+LDFLAGS  = -Llibft -lft
+SRCS     = pipex.c \
+		   die.c \
+		   ft_getenv.c \
+		   ft_execvp.c 
 OBJS     = $(SRCS:.c=.o)
-#LIB_NAME = libft
-#LIB_PATH = ./$(LIB_NAME)/$(LIB_NAME).a
+LIB_NAME = libft
+LIB_PATH = ./$(LIB_NAME)/$(LIB_NAME).a
 
 .PHONY: NAME all
 all: $(NAME)
 
-$(NAME): $(OBJS) #$(LIB_PATH)
+$(NAME): $(OBJS) $(LIB_PATH)
 	$(CC) $(OBJS) -o $(NAME)
-#	$(LDFLAGS)
+	$(LDFLAGS)
 
 $(LIB_PATH):
 	$(MAKE) -C $(LIB_NAME) bonus
@@ -21,12 +24,12 @@ $(LIB_PATH):
 
 .PHONY: clean
 clean:
-#	$(MAKE) -C $(LIB_NAME) clean
+	$(MAKE) -C $(LIB_NAME) clean
 	$(RM) $(OBJS)
 
 .PHONY: fclean
 fclean:
-#	$(MAKE) -C $(LIB_NAME) fclean
+	$(MAKE) -C $(LIB_NAME) fclean
 	$(RM) $(OBJS) $(NAME)
 
 .PHONY: re
