@@ -1,16 +1,17 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/wait.h>
+#include "pipex.h"
 
-int	main(void)
+int	main(int argc, char **argv, char **env)
 {
+	int	iofds[2];
 	int	pipefds[2];
 	pid_t	pid;
 
-	char *argv[] = {"/bin/ls", NULL};
-	char *argv2[] = {"/usr/bin/grep", "out", NULL};
-	extern char **environ;
+	iofds[I] = open(argv[2], O_RDONLY);
+	iofds[O] = open(argv[argc], O_WRONLY | O_CREAT);
+
+	char *cmd_args1[] = {argv[3], NULL};
+	char *cmd_args2[] = {argv[4], NULL};
+
 	if (pipe(pipefds) == -1)
 	{
 		perror("pipe(2)");
@@ -26,15 +27,15 @@ int	main(void)
 
 	if (pid == 0)
 	{
-		close(pipefds[0]);
-		if (dup2(pipefds[1], STDOUT_FILENO) == -1)
+		close(pipefds[R]);
+		if (dup2(pipefds[W], STDOUT_FILENO) == -1)
 		{
 			perror("dup2(2)");
 			exit(EXIT_FAILURE);
 		}
-		close(pipefds[1]);
+		close(pipefds[W]);
 
-		if (execve("/bin/ls", argv, environ) == -1)
+		if (execve(argv[3], cmd_args1, env) == -1)
 		{
 			perror("execve");
 			exit(EXIT_FAILURE);
@@ -43,15 +44,15 @@ int	main(void)
 	else
 	{
 		wait(NULL);
-		close(pipefds[1]);
-		if (dup2(pipefds[0], STDIN_FILENO) == -1)
+		close(pipefds[W]);
+		if (dup2(pipefds[R], STDIN_FILENO) == -1)
 		{
 			perror("dup2");
 			exit(EXIT_FAILURE);
 		}
-		close(pipefds[0]);
+		close(pipefds[R]);
 
-		if (execve("/usr/bin/grep", argv2, environ) == -1)
+		if (execve(argv[4], cmd_args2, env) == -1)
 		{
 			perror("execve");
 			exit(EXIT_FAILURE);
