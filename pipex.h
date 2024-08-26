@@ -23,7 +23,7 @@
 # include <unistd.h>
 # include <sys/wait.h>
 # include <fcntl.h>
-# include "libft.h"
+# include "libft/libft.h"
 
 extern char **environ;
 
