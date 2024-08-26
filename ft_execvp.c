@@ -29,26 +29,40 @@ static void	cleanup(char **substrs)
 int	ft_execvp(char *file, char *const argv[])
 {
 	char	**dirs;
-	char	*path;
+	char	*full_path;
 	char	*file_path;
+	char	*temp_path;
 	size_t	i;
 
+	if (ft_strchr(file, '/'))
+	{
+		execve(file, argv, environ);
+		die("exeve");
+	}
 	dirs = ft_split(ft_getenv("PATH"), ':');
 	if (!dirs)
 		return (-1);
+	full_path = NULL;
 	file_path = ft_strjoin("/", file);
 	i = 0;
 	while (dirs[i])
 	{
-		path = ft_strjoin(dirs[i], file_path);
-		if (!access(path, X_OK))
+		temp_path = ft_strjoin(dirs[i], file_path);
+		if (!access(temp_path, X_OK))
+		{
+			full_path = temp_path;
 			break ;
-		free(path);
-		path = NULL;
+		}
+		free(temp_path);
 		i++;
 	}
-	execve(path, argv, environ);
-	return (cleanup(dirs), free(file_path), free(path), -1);
+	free(file_path);
+	if (full_path)
+	{
+		execve(full_path, argv, environ);
+		free(full_path);
+	}
+	return (cleanup(dirs), -1);
 }
 
 //__attribute__((destructor)) static void destructor(void)
