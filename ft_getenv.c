@@ -26,7 +26,7 @@ char	*ft_getenv(char *name)
 		if (ft_strlen(*env) < len)
 		{
 			env++;
-			continue;
+			continue ;
 		}
 		if (!ft_strncmp(*env, name, len) && (*env)[len] == '=')
 			return (*env + len + 1);
@@ -35,7 +35,7 @@ char	*ft_getenv(char *name)
 	return (NULL);
 }
 
-//int main(int argc, char *argv[])
+// int main(int argc, char *argv[])
 //{
 //	if (argc < 2)
 //		return (0);
@@ -45,4 +45,3 @@ char	*ft_getenv(char *name)
 //		printf("%s\n", *dir++);
 //	}
 //}
-
