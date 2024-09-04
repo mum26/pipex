@@ -14,8 +14,9 @@
 
 static void	cleanup(char **substrs)
 {
-	char **temp = substrs;
+	char	**temp;
 
+	temp = substrs;
 	while (*temp)
 	{
 		free(*temp);
@@ -26,29 +27,22 @@ static void	cleanup(char **substrs)
 	substrs = NULL;
 }
 
-int	ft_execvp(char *file, char *const argv[])
+static char	*get_executable_path(char *file_path)
 {
 	char	**dirs;
 	char	*full_path;
-	char	*file_path;
 	char	*temp_path;
 	size_t	i;
 
-	if (ft_strchr(file, '/'))
-	{
-		execve(file, argv, environ);
-		die("exeve");
-	}
 	dirs = ft_split(ft_getenv("PATH"), ':');
-	if (!dirs)
-		return (-1);
+	if (!dirs || !file_path)
+		return (NULL);
 	full_path = NULL;
-	file_path = ft_strjoin("/", file);
 	i = 0;
 	while (dirs[i])
 	{
 		temp_path = ft_strjoin(dirs[i], file_path);
-		if (!access(temp_path, X_OK))
+		if (access(temp_path, X_OK) == 0)
 		{
 			full_path = temp_path;
 			break ;
@@ -56,24 +50,43 @@ int	ft_execvp(char *file, char *const argv[])
 		free(temp_path);
 		i++;
 	}
+	return (cleanup(dirs), full_path);
+}
+
+int	ft_execvp(char *file, char *const argv[])
+{
+	char	*full_path;
+	char	*file_path;
+
+	if (ft_strchr(file, '/'))
+	{
+		execve(file, argv, environ);
+		die("exeve");
+	}
+	file_path = ft_strjoin("/", file);
+	if (!file_path)
+		die("ft_strjoin");
+	full_path = get_executable_path(file_path);
 	free(file_path);
 	if (full_path)
 	{
 		execve(full_path, argv, environ);
 		free(full_path);
+		die("execve");
 	}
-	return (cleanup(dirs), -1);
+	return (-1);
 }
 
-//__attribute__((destructor)) static void destructor(void)
-//{
-//	system("leaks -q a.out");
-//}
-//
-//int	main(int argc, char *argv[])
-//{
-//	(void)argc;
+__attribute__((destructor)) static void destructor(void)
+{
+	system("leaks -q a.out");
+}
+
+int	main(int argc, char *argv[])
+{
+	(void)argc;
 //	ft_execvp(argv[1], &argv[1]);
 //	perror("ft_execvp");
 //	exit(1);
-//}
+	ft_putstr_fd(get_executable_path(argv[1]), 1);
+}
