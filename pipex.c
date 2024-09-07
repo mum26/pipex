@@ -12,17 +12,64 @@
 
 #include "pipex.h"
 
+int	set_input(t_pipe *pipe)
+{
+	int	input_fd;
+	int	stat;
+
+	stat = 0;
+	if (access(pipe->in_file, F_OK | R_OK) == 0)
+	{
+		input_fd = open(pipe->in_file, O_RDONLY);
+		if (input_fd == -1)
+			perror("open");
+		if (dup2(input_fd, STDIN_FILENO) == -1)
+			perror("dup2");
+		close(input_fd);
+	}
+	else
+	{
+		input_fd = open("/dev/null", O_RDONLY);
+		if (input_fd == -1)
+			perror("open");
+		if (dup2(input_fd, STDIN_FILENO) == -1)
+			perror("dup2");
+		close(input_fd);
+		stat = -1;
+	}
+	return (stat);
+}
+
+void	init_pipe(t_pipe *pipe, int argc, char **argv)
+{
+	pipe->in_file = argv[1];
+	pipe->out_file = argv[argc - 1];
+	pipe->mode = 0;
+	pipe->cmds = argv[2];
+	pipe->n_cmds = argc - 3;
+	pipe->stat = 0;
+	pipe->lim = argv[2];
+}
+
 int	main(int argc, char **argv)
 {
 	int	iofds[2];
 	int	pipefds[2];
 	pid_t	pid;
+	t_pipe	pipe;
 
 	iofds[R] = open(argv[1], O_RDONLY);
 	iofds[W] = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 
 	char **cmd_args1 = ft_split(argv[2], ' ');
 	char **cmd_args2 = ft_split(argv[3], ' ');
+
+//	start
+	if (argc < 5)
+		die("arguments 足りない");
+	
+
+	init_pipe(&pipe, argc, argv);
 
 	if (pipe(pipefds) == -1)
 		die("pipe");
