@@ -15,8 +15,6 @@
 
 # define R 0
 # define W 1
-# define I 0
-# define O 1
 
 # include <stdio.h>
 # include <stdlib.h>
@@ -26,6 +24,17 @@
 # include "libft/libft.h"
 
 extern char **environ;
+
+typedef struct s_pipe
+{
+	char	*in_file;
+	char	*out_file;
+	int		mode;
+	char	**cmds;
+	int		n_cmds;
+	int		stat;
+	char	*lim;
+}				t_pipe;
 
 void	die(const char *str);
 char	*ft_getenv(char *name);
