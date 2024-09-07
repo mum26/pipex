@@ -77,16 +77,16 @@ int	ft_execvp(char *file, char *const argv[])
 	return (-1);
 }
 
-__attribute__((destructor)) static void destructor(void)
-{
-	system("leaks -q a.out");
-}
-
-int	main(int argc, char *argv[])
-{
-	(void)argc;
+//__attribute__((destructor)) static void destructor(void)
+//{
+//	system("leaks -q a.out");
+//}
+//
+//int	main(int argc, char *argv[])
+//{
+//	(void)argc;
 //	ft_execvp(argv[1], &argv[1]);
 //	perror("ft_execvp");
 //	exit(1);
-	ft_putstr_fd(get_executable_path(argv[1]), 1);
-}
+//	ft_putstr_fd(get_executable_path(argv[1]), 1);
+//}
