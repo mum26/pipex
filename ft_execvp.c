@@ -77,6 +77,7 @@ int	ft_execvp(char *file, char *const argv[])
 	return (-1);
 }
 
+
 //__attribute__((destructor)) static void destructor(void)
 //{
 //	system("leaks -q a.out");
