@@ -6,7 +6,7 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 17:41:08 by sishige           #+#    #+#             */
-/*   Updated: 2024/08/24 23:40:47 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/07 20:21:27 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,10 @@ typedef struct s_pipe
 	char	*lim;
 }				t_pipe;
 
-void	die(const char *str);
+void	die(const char *msg);
+void	panic(char	*cause);
+int		warn(char	*cause);
+
 char	*ft_getenv(char *name);
 int		ft_execvp(char *file, char *const argv[]);
 

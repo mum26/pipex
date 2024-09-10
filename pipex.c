@@ -6,7 +6,7 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 23:08:16 by sishige           #+#    #+#             */
-/*   Updated: 2024/08/25 00:13:44 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/07 19:51:16 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,12 +40,33 @@ int	set_input(t_pipe *pipe)
 	return (stat);
 }
 
+void	set_output(t_pipe *pipe)
+{
+	int	output_fd;
+
+	if (access(pipe->out_file, F_OK) == 0 
+			&& access(pipe->out_file, W_OK) == -1)
+		fatal_error_exit(pipe->out_file);
+	else
+	{
+		if (pipe->mode)
+			output_fd = open(pipe->out_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		else
+			output_fd = open(pipe->out_file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+		if (output_fd == -1)
+			die("open");
+		if (dup2(output_fd, STDOUT_FILENO) == -1)
+			die("dup2");
+		close(output_fd);
+	}
+}
+
 void	init_pipe(t_pipe *pipe, int argc, char **argv)
 {
 	pipe->in_file = argv[1];
 	pipe->out_file = argv[argc - 1];
 	pipe->mode = 0;
-	pipe->cmds = argv[2];
+	pipe->cmds = &argv[2];
 	pipe->n_cmds = argc - 3;
 	pipe->stat = 0;
 	pipe->lim = argv[2];
@@ -56,7 +77,7 @@ int	main(int argc, char **argv)
 	int	iofds[2];
 	int	pipefds[2];
 	pid_t	pid;
-	t_pipe	pipe;
+	//t_pipe	pipe;
 
 	iofds[R] = open(argv[1], O_RDONLY);
 	iofds[W] = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
@@ -69,7 +90,7 @@ int	main(int argc, char **argv)
 		die("arguments 足りない");
 	
 
-	init_pipe(&pipe, argc, argv);
+//	init_pipe(&pipe, argc, argv);
 
 	if (pipe(pipefds) == -1)
 		die("pipe");
@@ -82,10 +103,10 @@ int	main(int argc, char **argv)
 		close(pipefds[R]);
 		close(iofds[W]);
 		if (dup2(iofds[R], STDIN_FILENO) == -1)
-			die("dup2");
+			die("dup21");
 		close(iofds[R]);
 		if (dup2(pipefds[W], STDOUT_FILENO) == -1)
-			die("dup2");
+			die("dup22");
 		close(pipefds[W]);
 
 		if (ft_execvp(cmd_args1[0], cmd_args1) == -1)
