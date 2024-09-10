@@ -12,7 +12,7 @@
 
 #include "pipex.h"
 
-void	die(const char *msg)
+void	die(const char *cause)
 {
 	perror(msg);
 	exit(1);
