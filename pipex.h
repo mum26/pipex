@@ -25,7 +25,7 @@
 
 extern char **environ;
 
-typedef struct s_pipe
+typedef struct s_pipex
 {
 	char	*in_file;
 	char	*out_file;
@@ -34,11 +34,15 @@ typedef struct s_pipe
 	int		n_cmds;
 	int		stat;
 	char	*lim;
-}				t_pipe;
+}				t_pipex;
 
-void	die(const char *msg);
+void	die(const char *cause);
 void	panic(char	*cause);
 int		warn(char	*cause);
+
+int		set_input(t_pipex *pipex);
+void	set_output(t_pipex *pipex);
+void	init_pipex(t_pipex *pipex, int argc, char **argv);
 
 char	*ft_getenv(char *name);
 int		ft_execvp(char *file, char *const argv[]);

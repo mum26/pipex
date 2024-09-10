@@ -12,15 +12,15 @@
 
 #include "pipex.h"
 
-int	set_input(t_pipe *pipe)
+int	set_input(t_pipex *pipex)
 {
 	int	input_fd;
 	int	stat;
 
 	stat = 0;
-	if (access(pipe->in_file, F_OK | R_OK) == 0)
+	if (access(pipex->in_file, F_OK | R_OK) == 0)
 	{
-		input_fd = open(pipe->in_file, O_RDONLY);
+		input_fd = open(pipex->in_file, O_RDONLY);
 		if (input_fd == -1)
 			perror("open");
 		if (dup2(input_fd, STDIN_FILENO) == -1)
@@ -35,24 +35,24 @@ int	set_input(t_pipe *pipe)
 		if (dup2(input_fd, STDIN_FILENO) == -1)
 			perror("dup2");
 		close(input_fd);
-		stat = -1;
+		stat = warn(pipex->out_file);
 	}
 	return (stat);
 }
 
-void	set_output(t_pipe *pipe)
+void	set_output(t_pipex *pipex)
 {
 	int	output_fd;
 
-	if (access(pipe->out_file, F_OK) == 0 
-			&& access(pipe->out_file, W_OK) == -1)
-		fatal_error_exit(pipe->out_file);
+	if (access(pipex->out_file, F_OK) == 0 
+			&& access(pipex->out_file, W_OK) == -1)
+		panic(pipex->out_file);
 	else
 	{
-		if (pipe->mode)
-			output_fd = open(pipe->out_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (pipex->mode)
+			output_fd = open(pipex->out_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		else
-			output_fd = open(pipe->out_file, O_WRONLY | O_CREAT | O_APPEND, 0644);
+			output_fd = open(pipex->out_file, O_WRONLY | O_CREAT | O_APPEND, 0644);
 		if (output_fd == -1)
 			die("open");
 		if (dup2(output_fd, STDOUT_FILENO) == -1)
@@ -61,7 +61,7 @@ void	set_output(t_pipe *pipe)
 	}
 }
 
-void	init_pipe(t_pipe *pipe, int argc, char **argv)
+void	init_pipex(t_pipex *pipe, int argc, char **argv)
 {
 	pipe->in_file = argv[1];
 	pipe->out_file = argv[argc - 1];
@@ -77,7 +77,7 @@ int	main(int argc, char **argv)
 	int	iofds[2];
 	int	pipefds[2];
 	pid_t	pid;
-	//t_pipe	pipe;
+	t_pipex	pipex;
 
 	iofds[R] = open(argv[1], O_RDONLY);
 	iofds[W] = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
@@ -90,7 +90,7 @@ int	main(int argc, char **argv)
 		die("arguments 足りない");
 	
 
-//	init_pipe(&pipe, argc, argv);
+	init_pipex(&pipex, argc, argv);
 
 	if (pipe(pipefds) == -1)
 		die("pipe");
