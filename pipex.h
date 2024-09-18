@@ -18,12 +18,14 @@
 
 # include <stdio.h>
 # include <stdlib.h>
+# include <string.h>
 # include <unistd.h>
 # include <sys/wait.h>
 # include <fcntl.h>
 # include "libft/libft.h"
 
-extern char **environ;
+extern char	**environ;
+extern int	errno;
 
 typedef struct s_pipex
 {

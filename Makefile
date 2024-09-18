@@ -16,7 +16,7 @@ $(NAME): $(OBJS) $(LIB_PATH)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(OBJS) -o $(NAME)
 
 $(LIB_PATH):
-	$(MAKE) -C $(LIB_NAME) bonus
+	$(MAKE) -C $(LIB_NAME)
 
 .c.o:
 	$(CC) $(CFLAGS) -c $< -o $@

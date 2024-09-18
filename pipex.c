@@ -65,7 +65,7 @@ void	init_pipex(t_pipex *pipe, int argc, char **argv)
 {
 	pipe->in_file = argv[1];
 	pipe->out_file = argv[argc - 1];
-	pipe->mode = 0;
+	pipe->mode = 1;
 	pipe->cmds = &argv[2];
 	pipe->n_cmds = argc - 3;
 	pipe->stat = 0;
@@ -74,13 +74,9 @@ void	init_pipex(t_pipex *pipe, int argc, char **argv)
 
 int	main(int argc, char **argv)
 {
-	int	iofds[2];
 	int	pipefds[2];
 	pid_t	pid;
 	t_pipex	pipex;
-
-	iofds[R] = open(argv[1], O_RDONLY);
-	iofds[W] = open(argv[argc - 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
 
 	char **cmd_args1 = ft_split(argv[2], ' ');
 	char **cmd_args2 = ft_split(argv[3], ' ');
@@ -88,9 +84,10 @@ int	main(int argc, char **argv)
 //	start
 	if (argc < 5)
 		die("arguments 足りない");
-	
-
+//	io file set
 	init_pipex(&pipex, argc, argv);
+	set_input(&pipex);
+	set_output(&pipex);
 
 	if (pipe(pipefds) == -1)
 		die("pipe");
@@ -101,14 +98,9 @@ int	main(int argc, char **argv)
 	if (pid == 0)
 	{
 		close(pipefds[R]);
-		close(iofds[W]);
-		if (dup2(iofds[R], STDIN_FILENO) == -1)
-			die("dup21");
-		close(iofds[R]);
 		if (dup2(pipefds[W], STDOUT_FILENO) == -1)
-			die("dup22");
+			die("dup2");
 		close(pipefds[W]);
-
 		if (ft_execvp(cmd_args1[0], cmd_args1) == -1)
 			die("ft_execvp");
 	}
@@ -116,14 +108,9 @@ int	main(int argc, char **argv)
 	{
 		wait(NULL);
 		close(pipefds[W]);
-		close(iofds[R]);
-		if (dup2(iofds[W], STDOUT_FILENO) == -1)
-			die("dup2");
-		close(iofds[W]);
 		if (dup2(pipefds[R], STDIN_FILENO) == -1)
 			die("dup2");
 		close(pipefds[R]);
-
 		if (ft_execvp(cmd_args2[0], cmd_args2) == -1)
 			die("ft_execvp");
 	}

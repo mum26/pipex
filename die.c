@@ -14,7 +14,7 @@
 
 void	die(const char *cause)
 {
-	perror(msg);
+	perror(cause);
 	exit(1);
 }
 
