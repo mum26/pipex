@@ -6,7 +6,7 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 23:08:16 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/07 19:51:16 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/18 20:22:25 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,25 +72,74 @@ void	init_pipex(t_pipex *pipe, int argc, char **argv)
 	pipe->lim = argv[2];
 }
 
+void	child_process(char *file, char **cmd_args, int pipefds[2], int i)
+{
+	close(pipefds[R]);
+	if (i < pipex->n_cmds - 1)
+		if (dup2(pipefds[W], STDOUT_FILENO) == -1);
+			die("dup2");
+	close(pipefds[W]);
+	ft_exevp(cmd, cmd_args);
+	ft_fprintf(stderr, "bash: %s: cmmand not found\n" cmd);
+	exit(1);
+}
+
+void	parent_process(int pipefds[2])
+{
+	close(pipefds[W]);
+	if (dup2(pipefds[R], STDIN_FILENO) == -1)
+		die("dup2");
+	close(pipefds[R]);
+}
+
+int	create_process(t_pipex *pipex)
+{
+	int		pipefds[2];
+	pid_t	pid;
+	char	**cmd_args;
+	int		i;
+
+	if (pipe(pipefds) == -1)
+		die("pipe");
+
+	i = 0;
+	while (i < n_cmds - 1)
+	{
+		cmd_args = ft_split(pipex->cmds[i]);
+		if (cmd_args == NULL)
+			die("ft_split");
+		if (pipe(pipefds) == -1)
+			die("pipe");
+		pid = fork();
+		if (pid == -1)
+			die("fork");
+		if (pid == 0)
+			child_process(cmd_args[0], cmd_args, pipefds, i);
+		else
+			parent_process(pipefds);
+		cleanup(cmd_args);
+		i++;
+	}
+}
+
 int	main(int argc, char **argv)
 {
 	int	pipefds[2];
 	pid_t	pid;
 	t_pipex	pipex;
 
-	char **cmd_args1 = ft_split(argv[2], ' ');
-	char **cmd_args2 = ft_split(argv[3], ' ');
-
 //	start
 	if (argc < 5)
 		die("arguments 足りない");
-//	io file set
+//	io file se
 	init_pipex(&pipex, argc, argv);
 	set_input(&pipex);
 	set_output(&pipex);
 
+// create pipe
 	if (pipe(pipefds) == -1)
 		die("pipe");
+
 	pid = fork();
 	if (pid == -1)
 		die("fork");
