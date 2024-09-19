@@ -12,7 +12,7 @@
 
 #include "pipex.h"
 
-static void	cleanup(char **substrs)
+void	cleanup(char **substrs)
 {
 	char	**temp;
 

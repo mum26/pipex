@@ -48,5 +48,6 @@ void	init_pipex(t_pipex *pipex, int argc, char **argv);
 
 char	*ft_getenv(char *name);
 int		ft_execvp(char *file, char *const argv[]);
+void	cleanup(char **substrs);
 
 #endif

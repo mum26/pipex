@@ -72,15 +72,15 @@ void	init_pipex(t_pipex *pipe, int argc, char **argv)
 	pipe->lim = argv[2];
 }
 
-void	child_process(char *file, char **cmd_args, int pipefds[2], int i)
+void	child_process(t_pipex *pipex, char **cmd_args, int pipefds[2], int i)
 {
 	close(pipefds[R]);
 	if (i < pipex->n_cmds - 1)
-		if (dup2(pipefds[W], STDOUT_FILENO) == -1);
+		if (dup2(pipefds[W], STDOUT_FILENO) == -1)
 			die("dup2");
 	close(pipefds[W]);
-	ft_exevp(cmd, cmd_args);
-	ft_fprintf(stderr, "bash: %s: cmmand not found\n" cmd);
+	ft_execvp(cmd_args[0], cmd_args);
+	ft_fprintf(stderr, "bash: %s: cmmand not found\n", cmd_args[0]);
 	exit(1);
 }
 
@@ -92,20 +92,17 @@ void	parent_process(int pipefds[2])
 	close(pipefds[R]);
 }
 
-int	create_process(t_pipex *pipex)
+void	create_process(t_pipex *pipex)
 {
 	int		pipefds[2];
 	pid_t	pid;
 	char	**cmd_args;
 	int		i;
 
-	if (pipe(pipefds) == -1)
-		die("pipe");
-
 	i = 0;
-	while (i < n_cmds - 1)
+	while (i < pipex->n_cmds)
 	{
-		cmd_args = ft_split(pipex->cmds[i]);
+		cmd_args = ft_split(pipex->cmds[i], ' ');
 		if (cmd_args == NULL)
 			die("ft_split");
 		if (pipe(pipefds) == -1)
@@ -114,7 +111,7 @@ int	create_process(t_pipex *pipex)
 		if (pid == -1)
 			die("fork");
 		if (pid == 0)
-			child_process(cmd_args[0], cmd_args, pipefds, i);
+			child_process(pipex, cmd_args, pipefds, i);
 		else
 			parent_process(pipefds);
 		cleanup(cmd_args);
@@ -124,8 +121,6 @@ int	create_process(t_pipex *pipex)
 
 int	main(int argc, char **argv)
 {
-	int	pipefds[2];
-	pid_t	pid;
 	t_pipex	pipex;
 
 //	start
@@ -137,32 +132,7 @@ int	main(int argc, char **argv)
 	set_output(&pipex);
 
 // create pipe
-	if (pipe(pipefds) == -1)
-		die("pipe");
-
-	pid = fork();
-	if (pid == -1)
-		die("fork");
-
-	if (pid == 0)
-	{
-		close(pipefds[R]);
-		if (dup2(pipefds[W], STDOUT_FILENO) == -1)
-			die("dup2");
-		close(pipefds[W]);
-		if (ft_execvp(cmd_args1[0], cmd_args1) == -1)
-			die("ft_execvp");
-	}
-	else
-	{
-		wait(NULL);
-		close(pipefds[W]);
-		if (dup2(pipefds[R], STDIN_FILENO) == -1)
-			die("dup2");
-		close(pipefds[R]);
-		if (ft_execvp(cmd_args2[0], cmd_args2) == -1)
-			die("ft_execvp");
-	}
+	create_process(&pipex);
 	return (0);
 }
 
