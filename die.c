@@ -36,6 +36,7 @@ int	warn(char *cause)
 
 	err_num = errno;
 	err_msg = strerror(err_num);
-	ft_fprintf(stderr, "bash: %s: %s\n", cause, err_msg);
+//	ft_fprintf(stderr, "bash: %s: %s\n", cause, err_msg);
+	ft_printf("bash: %s: %s\n", cause, err_msg);
 	return(err_num);
 }
