@@ -6,71 +6,11 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 23:08:16 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/18 20:22:25 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/19 22:06:31 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-
-int	set_input(t_pipex *pipex)
-{
-	int	input_fd;
-	int	stat;
-
-	stat = 0;
-	if (access(pipex->in_file, F_OK | R_OK) == 0)
-	{
-		input_fd = open(pipex->in_file, O_RDONLY);
-		if (input_fd == -1)
-			perror("open");
-		if (dup2(input_fd, STDIN_FILENO) == -1)
-			perror("dup2");
-		close(input_fd);
-	}
-	else
-	{
-		input_fd = open("/dev/null", O_RDONLY);
-		if (input_fd == -1)
-			perror("open");
-		if (dup2(input_fd, STDIN_FILENO) == -1)
-			perror("dup2");
-		close(input_fd);
-		stat = warn(pipex->out_file);
-	}
-	return (stat);
-}
-
-void	set_output(t_pipex *pipex)
-{
-	int	output_fd;
-
-	if (access(pipex->out_file, F_OK) == 0 
-			&& access(pipex->out_file, W_OK) == -1)
-		panic(pipex->out_file);
-	else
-	{
-		if (pipex->mode)
-			output_fd = open(pipex->out_file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
-		else
-			output_fd = open(pipex->out_file, O_WRONLY | O_CREAT | O_APPEND, 0644);
-		if (output_fd == -1)
-			die("open");
-		if (dup2(output_fd, STDOUT_FILENO) == -1)
-			die("dup2");
-		close(output_fd);
-	}
-}
-
-void	init_pipex(t_pipex *pipe, int argc, char **argv)
-{
-	pipe->in_file = argv[1];
-	pipe->out_file = argv[argc - 1];
-	pipe->mode = 1;
-	pipe->cmds = &argv[2];
-	pipe->n_cmds = argc - 3;
-	pipe->stat = 0;
-	pipe->lim = argv[2];
-}
 
 void	child_process(t_pipex *pipex, char **cmd_args, int pipefds[2], int i)
 {
@@ -80,7 +20,7 @@ void	child_process(t_pipex *pipex, char **cmd_args, int pipefds[2], int i)
 			die("dup2");
 	close(pipefds[W]);
 	ft_execvp(cmd_args[0], cmd_args);
-	ft_fprintf(stderr, "bash: %s: cmmand not found\n", cmd_args[0]);
+	ft_fprintf(stderr, "bash: %s: command not found\n", cmd_args[0]);
 	exit(1);
 }
 
@@ -123,16 +63,11 @@ int	main(int argc, char **argv)
 {
 	t_pipex	pipex;
 
-//	start
 	if (argc < 5)
 		die("arguments 足りない");
-//	io file se
 	init_pipex(&pipex, argc, argv);
-	set_input(&pipex);
-	set_output(&pipex);
-
-// create pipe
+	set_input(pipex.in_file);
+	set_output(pipex.out_file);
 	create_process(&pipex);
 	return (0);
 }
-

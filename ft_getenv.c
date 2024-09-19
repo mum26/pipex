@@ -6,7 +6,7 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 19:48:41 by sishige           #+#    #+#             */
-/*   Updated: 2024/08/24 23:08:05 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/19 22:14:29 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,3 @@ char	*ft_getenv(char *name)
 	}
 	return (NULL);
 }
-
-// int main(int argc, char *argv[])
-//{
-//	if (argc < 2)
-//		return (0);
-//	char **dir = ft_split(ft_getenv(argv[1]), ':');
-//	while (*dir)
-//	{
-//		printf("%s\n", *dir++);
-//	}
-//}

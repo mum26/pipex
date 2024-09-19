@@ -6,26 +6,11 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 19:48:36 by sishige           #+#    #+#             */
-/*   Updated: 2024/08/24 23:07:17 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/19 21:52:22 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
-
-void	cleanup(char **substrs)
-{
-	char	**temp;
-
-	temp = substrs;
-	while (*temp)
-	{
-		free(*temp);
-		*temp = NULL;
-		temp++;
-	}
-	free(substrs);
-	substrs = NULL;
-}
 
 static char	*get_executable_path(char *file_path)
 {
@@ -76,18 +61,3 @@ int	ft_execvp(char *file, char *const argv[])
 	}
 	return (-1);
 }
-
-
-//__attribute__((destructor)) static void destructor(void)
-//{
-//	system("leaks -q a.out");
-//}
-//
-//int	main(int argc, char *argv[])
-//{
-//	(void)argc;
-//	ft_execvp(argv[1], &argv[1]);
-//	perror("ft_execvp");
-//	exit(1);
-//	ft_putstr_fd(get_executable_path(argv[1]), 1);
-//}

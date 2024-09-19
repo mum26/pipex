@@ -4,7 +4,8 @@ LDFLAGS  = -Llibft -lft
 SRCS     = pipex.c \
 		   die.c \
 		   ft_getenv.c \
-		   ft_execvp.c 
+		   ft_execvp.c \
+		   initialize.c
 OBJS     = $(SRCS:.c=.o)
 LIB_NAME = libft
 LIB_PATH = ./$(LIB_NAME)/$(LIB_NAME).a
