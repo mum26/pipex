@@ -6,7 +6,7 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/20 17:33:16 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/20 20:12:48 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/20 20:42:00 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ static int	wait_process(pid_t pid, int n_cmds)
 	int	stat;
 
 	i = 0;
-	while (i < n_cmds - 2)
+	while (i < n_cmds - 1)
 	{
 		wait(&stat);
 		i++;
