@@ -2,10 +2,10 @@ NAME     = pipex
 CFLAGS   = -Wall -Wextra -Werror -g -Ilibft
 LDFLAGS  = -Llibft -lft
 SRCS     = pipex.c \
-		   die.c \
-		   ft_getenv.c \
-		   ft_execvp.c \
-		   initialize.c
+           die.c \
+           ft_getenv.c \
+           ft_execvp.c \
+           process.c
 OBJS     = $(SRCS:.c=.o)
 LIB_NAME = libft
 LIB_PATH = ./$(LIB_NAME)/$(LIB_NAME).a

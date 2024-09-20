@@ -6,7 +6,7 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/23 17:41:08 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/19 22:12:21 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/20 19:47:12 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,22 +24,11 @@
 extern char	**environ;
 extern int	errno;
 
-typedef struct s_pipex
-{
-	char	*in_file;
-	char	*out_file;
-	char	**cmds;
-	int		n_cmds;
-	int		stat;
-}			t_pipex;
+int			create_process(char **cmds, int n_cmds);
 
 void		die(const char *cause);
-void		panic(char *cause);
-int			warn(char *cause);
-
-int			set_input(char *file);
-void		set_output(char *file);
-void		init_pipex(t_pipex *pipex, int argc, char **argv);
+void		panic(const char *cause);
+int			warn(const char *cause);
 
 char		*ft_getenv(char *name);
 int			ft_execvp(char *file, char *const argv[]);

@@ -6,68 +6,66 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 23:08:16 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/19 22:06:31 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/20 19:48:00 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-void	child_process(t_pipex *pipex, char **cmd_args, int pipefds[2], int i)
+static int	set_input(char *file)
 {
-	close(pipefds[R]);
-	if (i < pipex->n_cmds - 1)
-		if (dup2(pipefds[W], STDOUT_FILENO) == -1)
-			die("dup2");
-	close(pipefds[W]);
-	ft_execvp(cmd_args[0], cmd_args);
-	ft_fprintf(stderr, "bash: %s: command not found\n", cmd_args[0]);
-	exit(1);
-}
+	int	input_fd;
+	int	stat;
 
-void	parent_process(int pipefds[2])
-{
-	close(pipefds[W]);
-	if (dup2(pipefds[R], STDIN_FILENO) == -1)
-		die("dup2");
-	close(pipefds[R]);
-}
-
-void	create_process(t_pipex *pipex)
-{
-	int		pipefds[2];
-	pid_t	pid;
-	char	**cmd_args;
-	int		i;
-
-	i = 0;
-	while (i < pipex->n_cmds)
+	stat = 0;
+	if (access(file, F_OK | R_OK) == 0)
 	{
-		cmd_args = ft_split(pipex->cmds[i], ' ');
-		if (cmd_args == NULL)
-			die("ft_split");
-		if (pipe(pipefds) == -1)
-			die("pipe");
-		pid = fork();
-		if (pid == -1)
-			die("fork");
-		if (pid == 0)
-			child_process(pipex, cmd_args, pipefds, i);
-		else
-			parent_process(pipefds);
-		cleanup(cmd_args);
-		i++;
+		input_fd = open(file, O_RDONLY);
+		if (input_fd == -1)
+			perror("open");
+		if (dup2(input_fd, STDIN_FILENO) == -1)
+			perror("dup2");
+		close(input_fd);
+	}
+	else
+	{
+		input_fd = open("/dev/null", O_RDONLY);
+		if (input_fd == -1)
+			perror("open");
+		if (dup2(input_fd, STDIN_FILENO) == -1)
+			perror("dup2");
+		close(input_fd);
+		stat = warn(file);
+	}
+	return (stat);
+}
+
+static void	set_output(char *file)
+{
+	int	output_fd;
+
+	if (access(file, F_OK) == 0 && access(file, W_OK) == -1)
+		panic(file);
+	else
+	{
+		output_fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
+		if (output_fd == -1)
+			die("open");
+		if (dup2(output_fd, STDOUT_FILENO) == -1)
+			die("dup2");
+		close(output_fd);
 	}
 }
 
 int	main(int argc, char **argv)
 {
-	t_pipex	pipex;
+	int	stat;
 
 	if (argc < 5)
-		die("arguments 足りない");
-	init_pipex(&pipex, argc, argv);
-	set_input(pipex.in_file);
-	set_output(pipex.out_file);
-	create_process(&pipex);
-	return (0);
+		die("Not enough arguments");
+	stat = set_input(argv[1]);
+	set_output(argv[argc - 1]);
+	if (stat == 0)
+		stat = create_process(&argv[2], argc - 3);
+	return (stat);
 }

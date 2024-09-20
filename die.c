@@ -6,7 +6,7 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 23:26:00 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/19 21:03:42 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/20 19:41:51 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,27 +15,27 @@
 void	die(const char *cause)
 {
 	perror(cause);
-	exit(1);
+	exit(EXIT_FAILURE);
 }
 
-void	panic(char *cause)
+void	panic(const char *cause)
 {
 	int		err_num;
 	char	*err_msg;
 
 	err_num = errno;
 	err_msg = strerror(err_num);
-	ft_fprintf(stderr, "bash: %s: %s\n", cause, err_msg);
-	exit(1);
+	ft_fprintf(stderr, "pipex: %s: %s\n", cause, err_msg);
+	exit(EXIT_FAILURE);
 }
 
-int	warn(char *cause)
+int	warn(const char *cause)
 {
 	int		err_num;
 	char	*err_msg;
 
 	err_num = errno;
 	err_msg = strerror(err_num);
-	ft_fprintf(stderr, "bash: %s: %s\n", cause, err_msg);
+	ft_fprintf(stderr, "pipex: %s: %s\n", cause, err_msg);
 	return (err_num);
 }
