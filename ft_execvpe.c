@@ -1,25 +1,25 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_execvp.c                                        :+:      :+:    :+:   */
+/*   ft_execvpe.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/24 19:48:36 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/19 21:52:22 by sishige          ###   ########.fr       */
+/*   Created: 2024/09/21 20:46:37 by sishige           #+#    #+#             */
+/*   Updated: 2024/09/21 20:46:48 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static char	*get_executable_path(char *file_path)
+static char	*get_executable_path(char *file_path, char *const envp[])
 {
 	char	**dirs;
 	char	*full_path;
 	char	*temp_path;
 	size_t	i;
 
-	dirs = ft_split(ft_getenv("PATH"), ':');
+	dirs = ft_split(ft_getenv("PATH", envp), ':');
 	if (!dirs || !file_path)
 		return (NULL);
 	full_path = NULL;
@@ -38,24 +38,26 @@ static char	*get_executable_path(char *file_path)
 	return (cleanup(dirs), full_path);
 }
 
-int	ft_execvp(char *file, char *const argv[])
+int	ft_execvpe(char *file, char *const argv[], char *const envp[])
 {
 	char	*full_path;
 	char	*file_path;
 
+	if (!file || !argv || !envp)
+		return (-1);
 	if (ft_strchr(file, '/'))
 	{
-		execve(file, argv, environ);
+		execve(file, argv, envp);
 		die("exeve");
 	}
 	file_path = ft_strjoin("/", file);
 	if (!file_path)
 		die("ft_strjoin");
-	full_path = get_executable_path(file_path);
+	full_path = get_executable_path(file_path, envp);
 	free(file_path);
 	if (full_path)
 	{
-		execve(full_path, argv, environ);
+		execve(full_path, argv, envp);
 		free(full_path);
 		die("execve");
 	}

@@ -6,20 +6,20 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 19:48:41 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/19 22:14:29 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/21 20:45:45 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-char	*ft_getenv(char *name)
+char	*ft_getenv(char *name, char *const envp[])
 {
 	char	**env;
 	size_t	len;
 
-	env = environ;
-	if (!name)
+	if (!name || !envp[])
 		return (NULL);
+	env = envp;
 	len = ft_strlen(name);
 	while (env)
 	{
