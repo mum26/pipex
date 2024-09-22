@@ -6,7 +6,7 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/21 20:46:37 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/21 20:46:48 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/21 23:06:54 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int	ft_execvpe(char *file, char *const argv[], char *const envp[])
 	char	*full_path;
 	char	*file_path;
 
-	if (!file || !argv || !envp)
+	if (!file && !argv && !envp)
 		return (-1);
 	if (ft_strchr(file, '/'))
 	{

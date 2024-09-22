@@ -6,7 +6,7 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 23:08:16 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/20 19:48:00 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/21 22:00:22 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,15 +57,26 @@ static void	set_output(char *file)
 	}
 }
 
-int	main(int argc, char **argv)
+static void	init_pipex(t_pipex *pipex,
+		int argc, char *const argv[], char *const envp[])
 {
-	int	stat;
+	pipex->infile = argv[1];
+	pipex->outfile = argv[argc - 1];
+	pipex->cmds = &argv[2];
+	pipex->n_cmds = argc - 3;
+	pipex->envp = envp;
+}
 
-	if (argc < 5)
-		die("Not enough arguments");
-	stat = set_input(argv[1]);
-	set_output(argv[argc - 1]);
-	if (stat == 0)
-		stat = create_process(&argv[2], argc - 3);
+int	main(int argc, char *const argv[], char *const envp[])
+{
+	int		stat;
+	t_pipex	pipex;
+
+	if (argc != 5)
+		die("The number of arguments is different");
+	init_pipex(&pipex, argc, argv, envp);
+	stat = set_input(pipex.infile);
+	set_output(pipex.outfile);
+	stat = create_process(pipex);
 	return (stat);
 }

@@ -4,7 +4,7 @@ LDFLAGS  = -Llibft -lft
 SRCS     = pipex.c \
            die.c \
            ft_getenv.c \
-           ft_execvp.c \
+           ft_execvpe.c \
            process.c
 OBJS     = $(SRCS:.c=.o)
 LIB_NAME = libft
