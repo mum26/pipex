@@ -6,7 +6,7 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/22 23:19:02 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/22 23:19:05 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/24 20:09:30 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,6 @@ static int	wait_process(pid_t pid, int n_cmds)
 		exit_stat = WEXITSTATUS(wait_stat);
 	else if (WIFSIGNALED(wait_stat))
 		exit_stat = WTERMSIG(wait_stat);
-	else
-		die("waitpid");
 	return (exit_stat);
 }
 

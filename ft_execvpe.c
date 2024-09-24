@@ -6,7 +6,7 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/21 20:46:37 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/21 23:06:54 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/24 20:24:05 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,10 +19,12 @@ static char	*get_executable_path(char *file_path, char *const envp[])
 	char	*temp_path;
 	size_t	i;
 
-	dirs = ft_split(ft_getenv("PATH", envp), ':');
-	if (!dirs || !file_path)
+	if (!file_path)
 		return (NULL);
-	full_path = NULL;
+	dirs = ft_split(ft_getenv("PATH", envp), ':');
+	if (!dirs)
+		return (file_path);
+	full_path = file_path;
 	i = 0;
 	while (dirs[i])
 	{
@@ -54,12 +56,13 @@ int	ft_execvpe(char *file, char *const argv[], char *const envp[])
 	if (!file_path)
 		die("ft_strjoin");
 	full_path = get_executable_path(file_path, envp);
-	free(file_path);
 	if (full_path)
 	{
 		execve(full_path, argv, envp);
-		free(full_path);
-		die("execve");
+		if (file_path != full_path)
+			free(full_path);
+		ft_fprintf(stderr, "pipex: %s: %s\n", argv[0], strerror(errno));
+		exit(127);
 	}
-	return (-1);
+	return (free(file_path), -1);
 }

@@ -6,7 +6,7 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 23:08:16 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/21 22:00:22 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/22 23:38:33 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ static void	set_output(char *file)
 	{
 		output_fd = open(file, O_WRONLY | O_CREAT | O_TRUNC, 0644);
 		if (output_fd == -1)
-			die("open");
+			panic(file);
 		if (dup2(output_fd, STDOUT_FILENO) == -1)
 			die("dup2");
 		close(output_fd);
