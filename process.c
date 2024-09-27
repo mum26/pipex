@@ -6,7 +6,7 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/22 23:19:02 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/24 20:09:30 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/27 22:27:46 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ static void	parent_process(int pipefds[2])
 	close(pipefds[R]);
 }
 
-static int	wait_process(pid_t pid, int n_cmds)
+static int	wait_process(pid_t *pid, int n_cmds)
 {
 	int	i;
 	int	wait_stat;
@@ -41,11 +41,11 @@ static int	wait_process(pid_t pid, int n_cmds)
 	i = 0;
 	while (i < n_cmds - 1)
 	{
-		wait(&wait_stat);
+		waitpid(pid[i], &wait_stat, 0);
 		i++;
 	}
 	exit_stat = 0;
-	waitpid(pid, &wait_stat, 0);
+	waitpid(pid[i], &wait_stat, 0);
 	if (WIFEXITED(wait_stat))
 		exit_stat = WEXITSTATUS(wait_stat);
 	else if (WIFSIGNALED(wait_stat))
@@ -56,7 +56,7 @@ static int	wait_process(pid_t pid, int n_cmds)
 int	create_process(t_pipex pipex)
 {
 	int		pipefds[2];
-	pid_t	pid;
+	pid_t	pid[pipex.n_cmds];
 	char	**cmd_args;
 	int		i;
 
@@ -68,10 +68,10 @@ int	create_process(t_pipex pipex)
 			die("ft_split");
 		if (pipe(pipefds) == -1)
 			die("pipe");
-		pid = fork();
-		if (pid == -1)
+		pid[i] = fork();
+		if (pid[i] == -1)
 			die("fork");
-		if (pid == 0)
+		if (pid[i] == 0)
 			child_process(pipex, cmd_args, pipefds, i);
 		else
 			parent_process(pipefds);

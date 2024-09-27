@@ -6,11 +6,25 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/21 20:46:37 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/24 20:24:05 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/27 22:34:31 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+static char	**get_dirs(char *file_path, char *const envp[])
+{
+	char	*path;
+
+	path = ft_getenv("PATH", envp);
+	if (path == NULL)
+	{
+		ft_fprintf(stderr, "pipex: %s: No such file or directory\n",
+			file_path + 1);
+		exit(127);
+	}
+	return (ft_split(path, ':'));
+}
 
 static char	*get_executable_path(char *file_path, char *const envp[])
 {
@@ -19,12 +33,10 @@ static char	*get_executable_path(char *file_path, char *const envp[])
 	char	*temp_path;
 	size_t	i;
 
-	if (!file_path)
-		return (NULL);
-	dirs = ft_split(ft_getenv("PATH", envp), ':');
-	if (!dirs)
-		return (file_path);
-	full_path = file_path;
+	dirs = get_dirs(file_path, envp);
+	if (dirs == NULL)
+		die("ft_split");
+	full_path = NULL;
 	i = 0;
 	while (dirs[i])
 	{
@@ -40,17 +52,32 @@ static char	*get_executable_path(char *file_path, char *const envp[])
 	return (cleanup(dirs), full_path);
 }
 
+void	execvpe_err_handling(char *file, char *path)
+{
+	if (path != NULL)
+		err_msg = ft_strdup("command not found");
+	else
+		err_msg = ft_strdup("No such file or directory");
+	if (file == NULL)
+		file = ft_strdup("");
+	ft_fprintf(stderr, "pipex: %s: %s\n", file, err_msg);
+	exit(127);
+}
+
 int	ft_execvpe(char *file, char *const argv[], char *const envp[])
 {
 	char	*full_path;
 	char	*file_path;
+	char	*path;
+	char	*err_msg;
 
-	if (!file && !argv && !envp)
-		return (-1);
+	path = ft_getenv("PATH", envp);
+	if (file == NULL || path == NULL)
+		execvpe_err_handling(file, path);
 	if (ft_strchr(file, '/'))
 	{
 		execve(file, argv, envp);
-		die("exeve");
+		panic(file);
 	}
 	file_path = ft_strjoin("/", file);
 	if (!file_path)
@@ -59,10 +86,8 @@ int	ft_execvpe(char *file, char *const argv[], char *const envp[])
 	if (full_path)
 	{
 		execve(full_path, argv, envp);
-		if (file_path != full_path)
-			free(full_path);
-		ft_fprintf(stderr, "pipex: %s: %s\n", argv[0], strerror(errno));
-		exit(127);
+		free(full_path);
+		die("execve");
 	}
 	return (free(file_path), -1);
 }
