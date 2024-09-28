@@ -6,7 +6,7 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/21 20:46:37 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/27 22:34:31 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/27 22:43:16 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,10 @@ static char	*get_executable_path(char *file_path, char *const envp[])
 	return (cleanup(dirs), full_path);
 }
 
-void	execvpe_err_handling(char *file, char *path)
+void	execvpe_error_handling(char *file, char *path)
 {
+	char	*err_msg;
+
 	if (path != NULL)
 		err_msg = ft_strdup("command not found");
 	else
@@ -69,11 +71,10 @@ int	ft_execvpe(char *file, char *const argv[], char *const envp[])
 	char	*full_path;
 	char	*file_path;
 	char	*path;
-	char	*err_msg;
 
 	path = ft_getenv("PATH", envp);
 	if (file == NULL || path == NULL)
-		execvpe_err_handling(file, path);
+		execvpe_error_handling(file, path);
 	if (ft_strchr(file, '/'))
 	{
 		execve(file, argv, envp);
