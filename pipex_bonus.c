@@ -6,7 +6,7 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 23:08:16 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/22 23:38:33 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/24 21:06:15 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,7 +72,7 @@ int	main(int argc, char *const argv[], char *const envp[])
 	int		stat;
 	t_pipex	pipex;
 
-	if (argc != 5)
+	if (argc < 5)
 		die("The number of arguments is different");
 	init_pipex(&pipex, argc, argv, envp);
 	stat = set_input(pipex.infile);

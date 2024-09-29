@@ -1,28 +1,30 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_execvp.c                                        :+:      :+:    :+:   */
+/*   ft_execvpe.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/24 19:48:36 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/19 21:52:22 by sishige          ###   ########.fr       */
+/*   Created: 2024/09/21 20:46:37 by sishige           #+#    #+#             */
+/*   Updated: 2024/09/24 20:24:05 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static char	*get_executable_path(char *file_path)
+static char	*get_executable_path(char *file_path, char *const envp[])
 {
 	char	**dirs;
 	char	*full_path;
 	char	*temp_path;
 	size_t	i;
 
-	dirs = ft_split(ft_getenv("PATH"), ':');
-	if (!dirs || !file_path)
+	if (!file_path)
 		return (NULL);
-	full_path = NULL;
+	dirs = ft_split(ft_getenv("PATH", envp), ':');
+	if (!dirs)
+		return (file_path);
+	full_path = file_path;
 	i = 0;
 	while (dirs[i])
 	{
@@ -38,26 +40,29 @@ static char	*get_executable_path(char *file_path)
 	return (cleanup(dirs), full_path);
 }
 
-int	ft_execvp(char *file, char *const argv[])
+int	ft_execvpe(char *file, char *const argv[], char *const envp[])
 {
 	char	*full_path;
 	char	*file_path;
 
+	if (!file && !argv && !envp)
+		return (-1);
 	if (ft_strchr(file, '/'))
 	{
-		execve(file, argv, environ);
+		execve(file, argv, envp);
 		die("exeve");
 	}
 	file_path = ft_strjoin("/", file);
 	if (!file_path)
 		die("ft_strjoin");
-	full_path = get_executable_path(file_path);
-	free(file_path);
+	full_path = get_executable_path(file_path, envp);
 	if (full_path)
 	{
-		execve(full_path, argv, environ);
-		free(full_path);
-		die("execve");
+		execve(full_path, argv, envp);
+		if (file_path != full_path)
+			free(full_path);
+		ft_fprintf(stderr, "pipex: %s: %s\n", argv[0], strerror(errno));
+		exit(127);
 	}
-	return (-1);
+	return (free(file_path), -1);
 }
