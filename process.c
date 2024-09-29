@@ -6,19 +6,28 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/22 23:19:02 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/24 20:09:30 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/29 21:56:29 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static void	child_process(t_pipex pipex, char **cmd_args, int pipefds[2], int i)
+static void	child_process(t_pipex pipex, char **cmd_args, int i)
 {
-	close(pipefds[R]);
-	if (i < pipex.n_cmds - 1)
-		if (dup2(pipefds[W], STDOUT_FILENO) == -1)
+	if (i == 0)
+	{
+		close(pipex.pipes[i].fds[R]);
+		if (0 < set_input(pipex.infile))
+			exit(EXIT_FAILURE);
+	}
+	if (i == pipex.n_cmds - 1)
+		set_output(pipex.outfile);
+	else
+	{
+		if (dup2(pipex.pipes[i].fds[W], STDOUT_FILENO) == -1)
 			die("dup2");
-	close(pipefds[W]);
+	}
+	close(pipex.pipes[i].fds[W]);
 	ft_execvpe(cmd_args[0], cmd_args, pipex.envp);
 	ft_fprintf(stderr, "pipex: %s: command not found\n", cmd_args[0]);
 	exit(127);
@@ -55,7 +64,6 @@ static int	wait_process(pid_t pid, int n_cmds)
 
 int	create_process(t_pipex pipex)
 {
-	int		pipefds[2];
 	pid_t	pid;
 	char	**cmd_args;
 	int		i;
@@ -66,15 +74,13 @@ int	create_process(t_pipex pipex)
 		cmd_args = ft_split(pipex.cmds[i], ' ');
 		if (cmd_args == NULL)
 			die("ft_split");
-		if (pipe(pipefds) == -1)
-			die("pipe");
 		pid = fork();
 		if (pid == -1)
 			die("fork");
 		if (pid == 0)
-			child_process(pipex, cmd_args, pipefds, i);
-		else
-			parent_process(pipefds);
+			child_process(pipex, cmd_args, i);
+		else if (i != pipex.n_cmds - 1)
+			parent_process(pipex.pipes[i].fds);
 		cleanup(cmd_args);
 		i++;
 	}

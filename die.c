@@ -6,7 +6,7 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 23:26:00 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/21 23:03:16 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/29 18:56:53 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	panic(const char *cause)
 
 	err_num = errno;
 	err_msg = strerror(err_num);
-	ft_fprintf(stderr, "pipex: %s: %s\n", cause, err_msg);
+	fprintf(stderr, "pipex: %s: %s\n", cause, err_msg);
 	exit(EXIT_FAILURE);
 }
 
@@ -36,6 +36,6 @@ int	warn(const char *cause)
 
 	err_num = errno;
 	err_msg = strerror(err_num);
-	ft_fprintf(stderr, "pipex: %s: %s\n", cause, err_msg);
+	fprintf(stderr, "pipex: %s: %s\n", cause, err_msg);
 	return (err_num);
 }

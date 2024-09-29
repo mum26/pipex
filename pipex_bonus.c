@@ -6,13 +6,43 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/24 23:08:16 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/24 21:06:15 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/29 21:44:46 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
 
-static int	set_input(char *file)
+static t_pipe	*creat_pipes(int n_cmds)
+{
+	t_pipe	*pipes;
+	int		i;
+
+	if (n_cmds < 2)
+		return (NULL);
+	pipes = (t_pipe *)malloc(sizeof(t_pipe) * (n_cmds - 1));
+	if (pipes == NULL)
+		die("malloc");
+	i = 0;
+	while (i < n_cmds - 1)
+	{
+		if (pipe(pipes[i++].fds) == -1)
+			die("pipe");
+	}
+	return (pipes);
+}
+
+static void	init_pipex(t_pipex *pipex,
+		int argc, char *const argv[], char *const envp[])
+{
+	pipex->infile = argv[1];
+	pipex->outfile = argv[argc - 1];
+	pipex->cmds = &argv[2];
+	pipex->n_cmds = argc - 3;
+	pipex->pipes = creat_pipes(pipex->n_cmds);
+	pipex->envp = envp;
+}
+
+int	set_input(char *file)
 {
 	int	input_fd;
 	int	stat;
@@ -40,7 +70,7 @@ static int	set_input(char *file)
 	return (stat);
 }
 
-static void	set_output(char *file)
+void	set_output(char *file)
 {
 	int	output_fd;
 
@@ -57,16 +87,6 @@ static void	set_output(char *file)
 	}
 }
 
-static void	init_pipex(t_pipex *pipex,
-		int argc, char *const argv[], char *const envp[])
-{
-	pipex->infile = argv[1];
-	pipex->outfile = argv[argc - 1];
-	pipex->cmds = &argv[2];
-	pipex->n_cmds = argc - 3;
-	pipex->envp = envp;
-}
-
 int	main(int argc, char *const argv[], char *const envp[])
 {
 	int		stat;
@@ -75,8 +95,6 @@ int	main(int argc, char *const argv[], char *const envp[])
 	if (argc < 5)
 		die("The number of arguments is different");
 	init_pipex(&pipex, argc, argv, envp);
-	stat = set_input(pipex.infile);
-	set_output(pipex.outfile);
 	stat = create_process(pipex);
 	return (stat);
 }
