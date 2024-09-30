@@ -6,7 +6,7 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/22 23:19:02 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/30 18:52:32 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/30 22:18:04 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,23 @@ static int	wait_process(pid_t *pids, int n_cmds)
 	return (exit_stat);
 }
 
+char	**make_args(char *str)
+{
+	char **args;
+
+	args = ft_split(str, ' ');
+	if (args == NULL)
+		die("ft_split");
+	if (*args != NULL)
+		return (args);
+	args = (char **)malloc(sizeof(char *) * 2);
+	if (args == NULL)
+		die("malloc");
+	args[0] = ft_strdup(str);
+	args[1] = NULL;
+	return (args);
+}
+
 int	create_process(t_pipex pipex)
 {
 	pid_t	*pids;
@@ -73,9 +90,7 @@ int	create_process(t_pipex pipex)
 	i = 0;
 	while (i < pipex.n_cmds)
 	{
-		cmd_args = ft_split(pipex.cmds[i], ' ');
-		if (cmd_args == NULL)
-			die("ft_split");
+		cmd_args = make_args(pipex.cmds[i]);
 		pids[i] = fork();
 		if (pids[i] == -1)
 			die("fork");

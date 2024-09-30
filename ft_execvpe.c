@@ -6,7 +6,7 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/21 20:46:37 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/30 18:40:11 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/30 22:31:40 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ static char	*get_executable_path(char *file_path, char *const envp[])
 		if (access(temp_path, X_OK) == 0)
 		{
 			full_path = temp_path;
-			break ;
+			break;
 		}
 		free(temp_path);
 		i++;
@@ -58,7 +58,7 @@ int	ft_execvpe(char *file, char *const argv[], char *const envp[])
 	char	*full_path;
 	char	*file_path;
 
-	if (!file && !argv && !envp)
+	if (!file)
 		return (-1);
 	if (ft_strchr(file, '/'))
 	{
@@ -69,7 +69,7 @@ int	ft_execvpe(char *file, char *const argv[], char *const envp[])
 	if (!file_path)
 		die("ft_strjoin");
 	full_path = get_executable_path(file_path, envp);
-	if (full_path)
+	if (full_path && *file)
 	{
 		execve(full_path, argv, envp);
 		die("execve");
