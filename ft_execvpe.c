@@ -6,11 +6,24 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/21 20:46:37 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/24 20:24:05 by sishige          ###   ########.fr       */
+/*   Updated: 2024/09/30 18:40:11 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "pipex.h"
+
+static char	**get_dirs(char *file, char *const envp[])
+{
+	char	*path;
+
+	path = ft_getenv("PATH", envp);
+	if (path == NULL)
+	{
+		ft_fprintf(stderr, "pipex: %s: %s\n", file, strerror(2));
+		exit(127);
+	}
+	return (ft_split(path, ':'));
+}
 
 static char	*get_executable_path(char *file_path, char *const envp[])
 {
@@ -21,10 +34,10 @@ static char	*get_executable_path(char *file_path, char *const envp[])
 
 	if (!file_path)
 		return (NULL);
-	dirs = ft_split(ft_getenv("PATH", envp), ':');
+	dirs = get_dirs(file_path + 1, envp);
 	if (!dirs)
-		return (file_path);
-	full_path = file_path;
+		return (NULL);
+	full_path = NULL;
 	i = 0;
 	while (dirs[i])
 	{
@@ -59,10 +72,7 @@ int	ft_execvpe(char *file, char *const argv[], char *const envp[])
 	if (full_path)
 	{
 		execve(full_path, argv, envp);
-		if (file_path != full_path)
-			free(full_path);
-		ft_fprintf(stderr, "pipex: %s: %s\n", argv[0], strerror(errno));
-		exit(127);
+		die("execve");
 	}
-	return (free(file_path), -1);
+	return (free(file_path), free(full_path), -1);
 }
