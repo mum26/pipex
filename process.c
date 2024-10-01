@@ -6,7 +6,7 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/22 23:19:02 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/30 22:18:04 by sishige          ###   ########.fr       */
+/*   Updated: 2024/10/01 19:20:32 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ static void	child_process(t_pipex pipex, char **cmd_args, int i)
 	{
 		if (dup2(pipex.pipes[i].fds[W], STDOUT_FILENO) == -1)
 			die("dup2");
+		close(pipex.pipes[i].fds[W]);
 	}
-	close(pipex.pipes[i].fds[W]);
 	ft_execvpe(cmd_args[0], cmd_args, pipex.envp);
 	ft_fprintf(stderr, "pipex: %s: command not found\n", cmd_args[0]);
 	exit(127);
