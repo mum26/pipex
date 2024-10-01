@@ -6,7 +6,7 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/21 20:46:37 by sishige           #+#    #+#             */
-/*   Updated: 2024/09/30 22:31:40 by sishige          ###   ########.fr       */
+/*   Updated: 2024/10/01 19:34:13 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ static char	*get_executable_path(char *file_path, char *const envp[])
 		if (access(temp_path, X_OK) == 0)
 		{
 			full_path = temp_path;
-			break;
+			break ;
 		}
 		free(temp_path);
 		i++;

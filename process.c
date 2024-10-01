@@ -6,7 +6,7 @@
 /*   By: sishige <sishige@student.42tokyo.j>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/22 23:19:02 by sishige           #+#    #+#             */
-/*   Updated: 2024/10/01 19:20:32 by sishige          ###   ########.fr       */
+/*   Updated: 2024/10/01 19:33:32 by sishige          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ static int	wait_process(pid_t *pids, int n_cmds)
 
 char	**make_args(char *str)
 {
-	char **args;
+	char	**args;
 
 	args = ft_split(str, ' ');
 	if (args == NULL)
