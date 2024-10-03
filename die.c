@@ -25,7 +25,7 @@ void	panic(const char *cause)
 
 	err_num = errno;
 	err_msg = strerror(err_num);
-	fprintf(stderr, "pipex: %s: %s\n", cause, err_msg);
+	ft_fprintf(stderr, "pipex: %s: %s\n", cause, err_msg);
 	exit(EXIT_FAILURE);
 }
 
@@ -36,6 +36,6 @@ int	warn(const char *cause)
 
 	err_num = errno;
 	err_msg = strerror(err_num);
-	fprintf(stderr, "pipex: %s: %s\n", cause, err_msg);
+	ft_fprintf(stderr, "pipex: %s: %s\n", cause, err_msg);
 	return (err_num);
 }
