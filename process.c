@@ -68,7 +68,7 @@ char	**make_args(char *str)
 	args = ft_split(str, ' ');
 	if (args == NULL)
 		die("ft_split");
-	if (*args != NULL)
+	if (*args != NULL && *str != ' ')
 		return (args);
 	args = (char **)malloc(sizeof(char *) * 2);
 	if (args == NULL)
