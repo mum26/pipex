@@ -41,14 +41,15 @@ static char	*get_executable_path(char *file_path, char *const envp[])
 	i = 0;
 	while (dirs[i])
 	{
-		temp_path = ft_strjoin(dirs[i], file_path);
+		temp_path = ft_strjoin(dirs[i++], file_path);
+		if (temp_path == NULL)
+			die("ft_strjoin");
 		if (access(temp_path, X_OK) == 0)
 		{
 			full_path = temp_path;
 			break ;
 		}
 		free(temp_path);
-		i++;
 	}
 	return (cleanup(dirs), full_path);
 }
