@@ -91,10 +91,14 @@ int	main(int argc, char *const argv[], char *const envp[])
 {
 	int		stat;
 	t_pipex	pipex;
+	int		i;
 
 	if (argc != 5)
 		die("The number of arguments is different");
 	init_pipex(&pipex, argc, argv, envp);
 	stat = create_process(pipex);
+	i = 0;
+	while(i < pipex.n_cmds - 1)
+		free(pipex.pipes + i++);
 	return (stat);
 }
